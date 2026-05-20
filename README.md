@@ -6,15 +6,11 @@
 
 ## 📌 Table of Contents
 
-- [Business Problem](#-business-problem)
 - [Objectives](#-objectives)
 - [Tech Stack](#️-tech-stack)
 - [Dataset Overview](#-dataset-overview)
-- [Project Architecture](#-project-architecture)
-- [SQL Analysis](#-sql-analysis)
 - [Key Findings & Dashboard Insights](#-key-findings--dashboard-insights)
 - [GenAI Insights Layer](#-genai-insights-layer)
-- [How to Run](#-how-to-run)
 - [Folder Structure](#-folder-structure)
 
 ---
