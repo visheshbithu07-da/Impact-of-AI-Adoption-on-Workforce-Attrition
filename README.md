@@ -19,13 +19,7 @@
 
 ---
 
-## 🧩 Business Problem
 
-As organizations accelerate AI adoption across workflows, early efficiency gains are often prioritized over long-term workforce impact. Rising burnout, growing fear of job displacement, and increasing attrition risk are emerging as unintended side effects of AI-driven work environments. Companies are progressing through different AI maturity stages without clear visibility into how these transitions affect employee wellbeing and retention.
-
-> **Without structured analysis, organizations risk optimizing for short-term productivity while overlooking deeper workforce instability.**
-
----
 
 ## 🎯 Objectives
 
@@ -112,63 +106,6 @@ CSV Data (BigQuery)
   Streamlit App (served via ngrok)
   ├── Embeds Power BI Dashboard (PDF iframe)
   └── Q&A Interface → GenAI Responses
-```
-
----
-
-## 🗄️ SQL Analysis
-
-All queries run in **Google BigQuery** against the `my_db.workforce` table.
-
-### KPI Overview
-```sql
-SELECT
-  ROUND(AVG(burnout_score), 1)                                        AS avg_burnout_score,
-  ROUND(COUNTIF(attrition_risk = 'High') * 100.0 / COUNT(*), 1)      AS pct_high_attrition_risk,
-  ROUND(AVG(hours_with_ai_assistance_daily), 1)                       AS avg_daily_ai_hours,
-  ROUND(AVG(productivity_score), 1)                                   AS avg_productivity_score,
-  ROUND(AVG(ai_replaces_my_tasks_pct), 1)                             AS tasks_replaced
-FROM my_db.workforce;
-```
-
-### Q1 — Which roles are most impacted by AI task replacement?
-```sql
-SELECT job_role,
-       ROUND(AVG(ai_replaces_my_tasks_pct), 1) AS task_replacement_percent
-FROM my_db.workforce
-GROUP BY job_role
-ORDER BY task_replacement_percent DESC;
-```
-
-### Q2 — How does attrition risk vary by AI adoption stage?
-```sql
-SELECT ai_adoption_stage, attrition_risk,
-       COUNT(*) AS emp_count,
-       ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (PARTITION BY ai_adoption_stage), 2) AS percent
-FROM my_db.workforce
-GROUP BY ai_adoption_stage, attrition_risk
-ORDER BY ai_adoption_stage, attrition_risk;
-```
-
-### Q3 — How widespread is fear of AI job displacement?
-```sql
-SELECT fear_of_ai_replacement,
-       ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 2) AS percent
-FROM my_db.workforce
-GROUP BY fear_of_ai_replacement;
-```
-
-### Q4 — Which industries have the most at-risk, burned-out employees?
-```sql
-SELECT industry,
-       ROUND(AVG(years_experience), 2)     AS avg_YoE,
-       ROUND(AVG(burnout_score), 2)         AS avg_burnout,
-       ROUND(AVG(job_satisfaction_1_5), 2)  AS avg_job_satisfaction
-FROM my_db.workforce
-WHERE fear_of_ai_replacement = 'High'
-  AND attrition_risk = 'High'
-GROUP BY industry
-ORDER BY avg_YoE DESC;
 ```
 
 ---
@@ -271,38 +208,6 @@ User Question: {user_question}
 
 Instructions: Answer in 3–4 sentences. Explain business impact.
 Provide actionable recommendations. Use only provided data.
-```
-
----
-
-## 🚀 How to Run
-
-### Prerequisites
-- Google Cloud project with BigQuery enabled
-- Vertex AI API enabled
-- Python 3.10+
-
-### 1. Install dependencies
-```bash
-pip install streamlit google-cloud-bigquery google-cloud-aiplatform vertexai
-```
-
-### 2. Authenticate with GCP
-```bash
-gcloud auth application-default login
-```
-
-### 3. Load data to BigQuery
-Upload `ai_workforce_attrition.csv` to a BigQuery table named `my_db.workforce`.
-
-### 4. Run the Streamlit app
-```bash
-streamlit run app.py
-```
-
-### 5. Expose via ngrok (optional, for sharing)
-```bash
-ngrok http 8501
 ```
 
 ---
